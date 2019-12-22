@@ -1,3 +1,8 @@
+#  Simplifying assumptions
+#  1. At the most one line of code will be given
+#  to the parsing functions at a time -- with no limit as to how long the line is
+#  this code is for parsing rules. For data parsing I intend to use standard python
+# csv and json ecosystem.
 
 class ParseError(Exception):
     def __init__(self, s, consumed, message):
@@ -56,10 +61,26 @@ def consume_term(s):
         raise ParseError(s, consumed, "Unflushed Stack %s" % (pointers, ))
 
 
+    def net_term_is_negative(s):
+
+
+
+    def consume_body(s):
+        while len(s) > 0:
+
+
+
+
+
     def parse_rule(s):
         splits = s.split(':-')
         if len(splits) == 1:
             return {
                 'head': consume_term(splits[0]),
                 'body': []
+            }
+        else if len(splits) == 2:
+            return {
+                'head': consume_term(splits[0]),
+                'body': consume_body(splits[1])
             }
