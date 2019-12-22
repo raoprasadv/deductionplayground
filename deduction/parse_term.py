@@ -62,12 +62,12 @@ def consume_term(s):
 
 
     def net_term_is_negative(s):
-
+        pass
 
 
     def consume_body(s):
         while len(s) > 0:
-
+            pass
 
 
 
@@ -79,7 +79,7 @@ def consume_term(s):
                 'head': consume_term(splits[0]),
                 'body': []
             }
-        else if len(splits) == 2:
+        elif len(splits) == 2:
             return {
                 'head': consume_term(splits[0]),
                 'body': consume_body(splits[1])
