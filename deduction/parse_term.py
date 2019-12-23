@@ -4,6 +4,8 @@
 #  this code is for parsing rules. For data parsing I intend to use standard python
 # csv and json ecosystem.
 
+
+
 class ParseError(Exception):
     def __init__(self, s, consumed, message):
         self.string = s
@@ -14,12 +16,12 @@ class ParseError(Exception):
         return "ParseError(%s, %s, %s)" % (self. string, self.consumed, self.message)
 
 
-def consume_term(s):
+def consume_term(s, last_idx=-1):
     ret_list = []
     pointers = [ret_list]
     consumed = ''
     current_token = None
-    for idx, ch in enumerate(s):
+    for idx, ch in enumerate(s[last_idx + 1:], start=last_idx+1):
         consumed += ch
         if ch == ' ' or ch == '\t':
             pass
@@ -41,6 +43,8 @@ def consume_term(s):
             if current_token is not None:
                 pointers[-1]. append(current_token)
                 current_token = None
+                if len(pointers) == 1:
+                    return ret_list, idx-1
             else:
                 raise ParseError(s, consume_term, "Comma follows non-atom")
         elif ch == '.':
@@ -48,7 +52,7 @@ def consume_term(s):
                 pointers[-1].append(current_token)
             return ret_list, idx
         elif current_token is not None:
-            if s[idx -1] in [' ', '\t']:
+            if s[idx - 1] in [' ', '\t']:
                 raise ParseError(s, consumed, 'space separated atoms')
             current_token += ch
         else:
@@ -61,26 +65,28 @@ def consume_term(s):
         raise ParseError(s, consumed, "Unflushed Stack %s" % (pointers, ))
 
 
-    def net_term_is_negative(s):
+def next_term_is_negative(s):
+    for idx,ch in enumerate(s):
+        if str.isspace(ch):
+            pass
+        else:
+            return ch == '~', idx
+
+
+def consume_body(s):
+    while len(s) > 0:
         pass
 
 
-    def consume_body(s):
-        while len(s) > 0:
-            pass
-
-
-
-
-    def parse_rule(s):
-        splits = s.split(':-')
-        if len(splits) == 1:
-            return {
-                'head': consume_term(splits[0]),
-                'body': []
-            }
-        elif len(splits) == 2:
-            return {
-                'head': consume_term(splits[0]),
-                'body': consume_body(splits[1])
-            }
+def parse_rule(s):
+    splits = s.split(':-')
+    if len(splits) == 1:
+        return {
+            'head': consume_term(splits[0]),
+            'body': []
+        }
+    elif len(splits) == 2:
+        return {
+            'head': consume_term(splits[0]),
+            'body': consume_body(splits[1])
+        }
